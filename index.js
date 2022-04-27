@@ -26,9 +26,7 @@ async function run() {
     const supporterCollection = client
       .db("supportNetwork")
       .collection("supporter");
-    const eventCollection = client
-      .db("supportNetwork")
-      .collection("event");
+    const eventCollection = client.db("supportNetwork").collection("event");
 
     // get all activities data
     app.get("/activity", async (req, res) => {
@@ -38,19 +36,27 @@ async function run() {
       res.send(activities);
     });
 
-    // get all activities data
+    // Post supporter data
     app.post("/supporter", async (req, res) => {
       const data = req.body;
       const result = await supporterCollection.insertOne(data);
       res.send(result);
     });
 
-    // get all activities data
+    // get all supporter data
     app.get("/supporter", async (req, res) => {
       const query = {};
       const cursor = supporterCollection.find(query);
       const supporters = await cursor.toArray();
       res.send(supporters);
+    });
+
+    // Delete supporter data
+    app.delete("/supporter", async (req, res) => {
+      const id = req.query.eventId;
+      const query = { _id: ObjectId(id) };
+      const result = await supporterCollection.deleteOne(query);
+      res.send(result);
     });
 
     // Post Event
@@ -60,7 +66,7 @@ async function run() {
       res.send(result);
     });
 
-    // Read Event
+    // Read Event Data
     app.get("/event", async (req, res) => {
       const query = {};
       const cursor = eventCollection.find(query);
@@ -68,13 +74,12 @@ async function run() {
       res.send(events);
     });
 
-    app.delete('/event', async (req, res) => {
-        const id = req.query.eventId;
-        const query = {_id: ObjectId(id)}
-        const result = await eventCollection.deleteOne(query);
-        res.send(result)
-    })
-
+    app.delete("/event", async (req, res) => {
+      const id = req.query.eventId;
+      const query = { _id: ObjectId(id) };
+      const result = await eventCollection.deleteOne(query);
+      res.send(result);
+    });
   } finally {
   }
 }
