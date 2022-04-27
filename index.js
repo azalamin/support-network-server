@@ -21,6 +21,7 @@ async function run() {
   try {
     await client.connect();
     const activityCollection = client.db("supportNetwork").collection("activities");
+    const supporterCollection = client.db("supportNetwork").collection("supporter");
 
     // get all activities data
     app.get("/activity", async(req, res) => {
@@ -28,6 +29,13 @@ async function run() {
          const cursor = activityCollection.find(query);
          const activities = await cursor.toArray();
          res.send(activities)
+    });
+
+    // get all activities data
+    app.post("/supporter", async(req, res) => {
+        const data = req.body;
+        const result = await supporterCollection.insertOne(data);
+        res.send(result);
     });
 
   } finally {
